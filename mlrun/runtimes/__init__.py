@@ -41,7 +41,7 @@ from .mpijob import (  # noqa
     MpiV1Alpha1RuntimeHandler,
     MpiV1RuntimeHandler,
 )
-from .nuclio import nuclio_init_hook
+from .nuclio_init import nuclio_init_hook
 from .remotesparkjob import RemoteSparkRuntime, RemoteSparkRuntimeHandler
 from .serving import ServingRuntime, new_v2_model_server
 from .sparkjob import SparkRuntime, SparkRuntimeHandler  # noqa
