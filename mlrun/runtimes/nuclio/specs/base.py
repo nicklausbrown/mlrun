@@ -36,21 +36,56 @@ class FunctionMetadata(CamelBaseModel):
 
 
 class BuildSpec(CamelBaseModel):
+    """ Nuclio function build specification
+
+    Many of these values have default values that can be found here:
+    https://nuclio.io/docs/latest/reference/function-configuration/function-configuration-reference/#function-specification-spec
+
+    For code entry types, learn more here:
+    https://nuclio.io/docs/latest/reference/function-configuration/code-entry-types/
+
+    Attributes
+    ----------
+    path : str, optional
+        The URL of a GitHub repository or an archive-file that contains the function code — for the github or archive
+        code-entry type — or the URL of a function source-code file
+    function_source_code : str, optional
+        Base-64 encoded function source code for the sourceCode code-entry type
+    code_entry : CodeEntryType, optional
+        The function's code-entry type - sourceCode | archive | github | image | s3
+    code_entry_attributes : Union[S3Attributes, ArchiveAttributes, GithubAttributes], optional
+        Code-entry attributes, which provide information for downloading the function when using github, s3, or archive
+    registry : str, optional
+        The container image repository to which the built image will be pushed
+    base_image : str, optional
+        The name of a base container image from which to build the function's processor image
+    onbuild_image : str, optional
+        The name of an "onbuild" container image from which to build the function's processor image
+    no_cache : bool, optional
+        Do not use any caching when building container images
+    no_base_image_pull : bool, optional
+        Do not pull any base images when building, use local images only
+    commands : List[str], optional
+        Commands run opaquely as part of container image build
+    image : str
+        The name of the built container image (default: the function name)
+
+    """
+
+    path: Optional[str] = None
+    function_source_code: Optional[str] = None
 
     code_entry_type: Optional[CodeEntryType] = None
     code_entry_attributes: Optional[Union[S3Attributes, ArchiveAttributes, GithubAttributes]] = None
 
-    path: str = None
-    function_source_code: str = None
+    registry: Optional[str] = None
+    base_image: Optional[str] = None
+    onbuild_image: Optional[str] = None
 
-    no_cache: bool = None
-    no_base_image_pull: bool = None
+    no_cache: Optional[bool] = None
+    no_base_image_pull: Optional[bool] = None
 
-    registry: str = None
-    onbuild_image: str = None
-    base_image: str = None
-
-    commands: List[str] = Field(default_factory=lambda: list(), alias='Commands')
+    commands: Optional[List[str]] = Field(default_factory=lambda: list(), alias='Commands')
 
     image: Optional[str] = None
 
