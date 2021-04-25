@@ -1,4 +1,5 @@
 import yaml
+import json
 from pydantic import BaseModel
 
 
@@ -17,7 +18,8 @@ class CamelBaseModel(BaseModel):
         return self.dict(*args, **kwargs)
 
     def to_yaml(self):
-        return yaml.dump(self.to_dict(by_alias=True, exclude_none=True))
+        # take advantage of cool things Pydantic does like obfuscate secrets
+        return yaml.dump(json.loads(self.to_json()))
 
     def to_json(self):
         return self.json(by_alias=True, exclude_none=True)

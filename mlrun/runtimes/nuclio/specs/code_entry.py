@@ -20,21 +20,30 @@ class S3Attributes(CamelBaseModel):
     s3_region: Optional[str] = None
     work_dir: Optional[str] = None
 
+    def add_secret(self, secret: str):
+        self.s3_secret_access_key = SecretStr(secret)
+
 
 class ArchiveAttributes(CamelBaseModel):
 
     class Headers(CamelBaseModel):
-        v3io_key: str = Field(default=None, alias='X-V3io-Session-Key')
+        v3io_key: SecretStr = Field(default=None, alias='X-V3io-Session-Key')
 
     headers: Headers = Headers()
     work_dir: Optional[str] = None
+
+    def add_secret(self, secret: str):
+        self.headers.v3io_key = SecretStr(secret)
 
 
 class GithubAttributes(CamelBaseModel):
 
     class Headers(CamelBaseModel):
-        auth_token: str = Field(default=None, alias='Authorization')
+        auth_token: Optional[SecretStr] = Field(default=None, alias='Authorization')
 
     branch: str
     headers: Headers = Headers()
     work_dir: Optional[str] = None
+
+    def add_secret(self, secret: str):
+        self.headers.auth_token = SecretStr(secret)
