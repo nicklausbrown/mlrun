@@ -60,6 +60,9 @@ class V3ioVolume(CamelBaseModel):
         self.flex_volume.options.container = container
         self.flex_volume.options.sub_path = sub_path
 
+    def add_secret(self, secret: str):
+        self.flex_volume.options.access_key = SecretStr(secret)
+
 
 class VolumeSpec(CamelBaseModel):
     """ Volume spec for mapping host file systems into a nuclio function
