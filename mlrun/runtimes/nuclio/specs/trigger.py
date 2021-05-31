@@ -10,8 +10,8 @@ class Trigger(CamelBaseModel, ABC):
 
     _name: str
     kind: str
-    max_workers: int
     attributes: Any
+    max_workers: Optional[int] = 1
 
     def name(self, name: str = None):
         if name is not None:
@@ -30,11 +30,6 @@ class CronTrigger(Trigger):
 
     """
 
-    _name: str = PrivateAttr(default='cron')
-
-    kind: str = 'cron'
-    max_workers: Optional[int] = 1
-
     class Attributes(CamelBaseModel):
         schedule: str = None
         interval: str = None
@@ -47,6 +42,8 @@ class CronTrigger(Trigger):
 
         event: Event = Event()
 
+    _name: str = PrivateAttr(default='cron')
+    kind: str = 'cron'
     attributes: Attributes = Attributes()
 
     def __init__(self, **data):
@@ -79,11 +76,6 @@ class KafkaTrigger(Trigger):
 
     """
 
-    _name: str = PrivateAttr(default='kafka')
-
-    kind: str = 'kafka-cluster'
-    max_workers: Optional[int] = 1
-
     class Attributes(CamelBaseModel):
 
         consumer_group: str = None
@@ -107,6 +99,8 @@ class KafkaTrigger(Trigger):
         rebalance_retry_timeout: Optional[str] = None
         max_wait_handler_during_rebalance: Optional[str] = None
 
+    _name: str = PrivateAttr(default='kafka')
+    kind: str = 'kafka-cluster'
     attributes: Attributes = Attributes()
 
 
@@ -130,14 +124,6 @@ class V3ioStreamTrigger(Trigger):
         Trigger attributes for further configuration
 
     """
-
-    _name: str = PrivateAttr(default='v3io')
-
-    kind: str = 'v3ioStream'
-    max_workers: int = 1
-
-    url: str = 'http://v3io-webapi:8081/'
-    password: SecretStr = None
 
     class Attributes(CamelBaseModel):
         """ Trigger specification for v3io streams
@@ -177,7 +163,12 @@ class V3ioStreamTrigger(Trigger):
         sequence_number_commit_interval: Optional[str] = None
         session_timeout: Optional[str] = None
 
+    _name: str = PrivateAttr(default='v3io')
+    kind: str = 'v3ioStream'
     attributes: Attributes = Attributes()
+
+    url: str = 'http://v3io-webapi:8081/'
+    password: SecretStr = None
 
     def add_secret(self, secret: str):
         self.password = SecretStr(secret)
@@ -213,11 +204,6 @@ class HttpTrigger(Trigger):
 
     """
 
-    _name: str = PrivateAttr(default='http')
-
-    kind: str = 'http'
-    max_workers: Optional[int] = 1
-
     class Attributes(CamelBaseModel):
 
         port: Optional[int] = None
@@ -229,4 +215,6 @@ class HttpTrigger(Trigger):
 
         service_type: Optional[HttpServiceOptions] = None
 
+    _name: str = PrivateAttr(default='http')
+    kind: str = 'http'
     attributes: Attributes = Attributes()
