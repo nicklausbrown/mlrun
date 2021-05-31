@@ -7,6 +7,8 @@ from . import CamelBaseModel
 
 class Volume(CamelBaseModel, ABC):
 
+    name: str = None
+
     @abstractmethod
     def target(self, value: str):
         pass
@@ -20,7 +22,6 @@ class PersistentVolume(Volume):
     class Attributes(CamelBaseModel):
         claim_name: str = None
 
-    name: str = None
     persistent_volume_claim: Attributes = Attributes()
 
     def target(self, value: str):
@@ -32,7 +33,6 @@ class HostVolume(Volume):
     class Attributes(CamelBaseModel):
         path: str = None
 
-    name: str = None
     host_path: Attributes = Attributes()
 
     def target(self, value: str):
@@ -44,7 +44,6 @@ class SecretVolume(Volume):
     class Attributes(CamelBaseModel):
         secret_name: str = None
 
-    name: str = None
     secret: Attributes = Attributes()
 
     def target(self, value: str):
@@ -63,7 +62,6 @@ class V3ioVolume(Volume):
         driver: str = 'v3io/fuse'
         options: Options = Options()
 
-    name: str = None
     flex_volume: Attributes = Attributes()
 
     def target(self, value: str):
@@ -117,7 +115,7 @@ class VolumeSpec(CamelBaseModel):
 
     def __init__(self, **data):
         super().__init__(**data)
-        self._apply_name()
+        self._apply_name(self._name)
 
     def name(self, name: str = None):
         """ Apply or return name of volume spec
@@ -135,12 +133,12 @@ class VolumeSpec(CamelBaseModel):
         if name is None:
             return self._name
         else:
-            self._name = name
-            self._apply_name()
+            self._apply_name(name)
         return self
 
-    def _apply_name(self):
+    def _apply_name(self, name: str):
         """ Internal method for keeping volume and volume mount names in sync"""
+        self._name = name
         self.volume_mount.name = self._name
         self.volume.name = self._name
 
