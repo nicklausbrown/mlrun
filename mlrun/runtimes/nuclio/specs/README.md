@@ -15,9 +15,9 @@ from mlrun.runtimes.nuclio.specs import *  # don't do this outside this example 
 config = NuclioConfig()
 
 volume = VolumeSpec(volume=V3ioVolume())
-volume.name('v3io')
-volume.map('/inside_function', '/users/v3io_user/path')
-volume.add_secret('StringYouWillNotSee')
+volume.name('v3io')\
+      .map('/inside_function', '/users/v3io_user/path')\
+      .add_secret('StringYouWillNotSee')
 
 config.add_volume(volume)
 

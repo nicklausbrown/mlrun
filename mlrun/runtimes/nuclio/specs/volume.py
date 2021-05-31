@@ -94,8 +94,6 @@ class VolumeSpec(CamelBaseModel):
 
     """
 
-    volume: Volume
-
     class Mount(CamelBaseModel):
         """ Volume spec for mapping host file systems into a nuclio function
 
@@ -113,6 +111,7 @@ class VolumeSpec(CamelBaseModel):
         read_only: Optional[bool] = None
         mount_path: str = None
 
+    volume: Volume
     volume_mount = Mount()
     _name: str = PrivateAttr(default='volume')
 
@@ -158,6 +157,7 @@ class VolumeSpec(CamelBaseModel):
         """
         self.volume_mount.mount_path = function_path
         self.volume.target(volume_target)
+        return self
 
     def add_secret(self, secret: str):
         """ Convenience method to inject a secret into a volume spec
@@ -172,3 +172,4 @@ class VolumeSpec(CamelBaseModel):
             self.volume.add_secret(secret)
         except AttributeError as e:
             raise AttributeError(f"Volume doesn't support secrets: {e}")
+        return self
