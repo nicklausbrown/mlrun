@@ -17,6 +17,7 @@ config = NuclioConfig()
 volume = VolumeSpec(volume=V3ioVolume())
 volume.name('v3io')
 volume.map('/inside_function', '/users/v3io_user/path')
+volume.add_secret('StringYouWillNotSee')
 
 config.add_volume(volume)
 
@@ -24,6 +25,7 @@ trigger = V3ioStreamTrigger()
 trigger.attributes.consumer_group = 'nuclio'
 trigger.attributes.container_name = 'users'
 trigger.attributes.stream_path = 'v3io_user/stream-path'
+trigger.add_secret('StringYouWillNotSee')
 
 config.add_trigger('v3io', trigger)
 

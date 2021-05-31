@@ -1,10 +1,18 @@
 import os
+from abc import ABC, abstractmethod
 from typing import Union, Optional
 from pydantic import SecretStr, PrivateAttr
 from . import CamelBaseModel
 
 
-class PersistentVolume(CamelBaseModel):
+class Volume(ABC):
+
+    @abstractmethod
+    def target(self, value: str):
+        pass
+
+
+class PersistentVolume(CamelBaseModel, Volume):
 
     class Attributes(CamelBaseModel):
         claim_name: str = None
@@ -16,7 +24,7 @@ class PersistentVolume(CamelBaseModel):
         self.persistent_volume_claim.claim_name = value
 
 
-class HostVolume(CamelBaseModel):
+class HostVolume(CamelBaseModel, Volume):
 
     class Attributes(CamelBaseModel):
         path: str = None
@@ -28,7 +36,7 @@ class HostVolume(CamelBaseModel):
         self.host_path.path = value
 
 
-class SecretVolume(CamelBaseModel):
+class SecretVolume(CamelBaseModel, Volume):
 
     class Attributes(CamelBaseModel):
         secret_name: str = None
@@ -40,7 +48,7 @@ class SecretVolume(CamelBaseModel):
         self.secret.secret_name = value
 
 
-class V3ioVolume(CamelBaseModel):
+class V3ioVolume(CamelBaseModel, Volume):
 
     class Attributes(CamelBaseModel):
 
@@ -147,3 +155,17 @@ class VolumeSpec(CamelBaseModel):
         """
         self.volume_mount.mount_path = function_path
         self.volume.target(volume_target)
+
+    def add_secret(self, secret: str):
+        """ Convenience method to inject a secret into a volume spec
+
+        Parameters
+        ----------
+        secret : str
+            Secret value to associate with a volume
+
+        """
+        try:
+            self.volume.add_secret(secret)
+        except AttributeError as e:
+            raise AttributeError(f"Volume doesn't support secrets: {e}")

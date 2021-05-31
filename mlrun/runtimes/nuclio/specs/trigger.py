@@ -159,6 +159,9 @@ class V3ioStreamTrigger(CamelBaseModel):
 
     attributes: Attributes = Attributes()
 
+    def add_secret(self, secret: str):
+        self.password = SecretStr(secret)
+
 
 class HttpIngresses(CamelBaseModel):
     host: str = None
