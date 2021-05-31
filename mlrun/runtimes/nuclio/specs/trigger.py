@@ -1,11 +1,16 @@
 from enum import Enum
+from abc import ABC
 from typing import Optional, Dict, Union, List
 from pydantic import Field, SecretStr
 
 from . import CamelBaseModel
 
 
-class CronTrigger(CamelBaseModel):
+class Trigger(CamelBaseModel, ABC):
+    pass
+
+
+class CronTrigger(Trigger):
     """ Trigger specification for cron job
 
     Attributes
@@ -52,7 +57,7 @@ class KafkaWorkerAllocationModeOptions(Enum):
     pool = 'pool'
 
 
-class KafkaTrigger(CamelBaseModel):
+class KafkaTrigger(Trigger):
     """ Trigger specification for kafka topics
 
     Attributes
@@ -97,7 +102,7 @@ class V3ioOffsetOptions(Enum):
     latest = 'latest'
 
 
-class V3ioStreamTrigger(CamelBaseModel):
+class V3ioStreamTrigger(Trigger):
     """ Trigger specification for v3io streams
 
     Attributes
@@ -182,7 +187,7 @@ class HttpServiceOptions(Enum):
     external = 'NodePort'
 
 
-class HttpTrigger(CamelBaseModel):
+class HttpTrigger(Trigger):
     """ Trigger specification for http requests
 
     Attributes

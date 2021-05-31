@@ -1,4 +1,5 @@
 from enum import Enum
+from abc import ABC, abstractmethod
 from typing import Optional
 from pydantic import SecretStr, Field
 
@@ -11,7 +12,16 @@ class CodeEntryType(Enum):
     archive = 'archive'
 
 
-class S3Attributes(CamelBaseModel):
+class CodeEntryAttributes(CamelBaseModel, ABC):
+
+    @abstractmethod
+    def add_secret(self, secret: str):
+        # good option for subclasses that don't support secrets
+        # raise NotImplemented(f'{self.__class__.__name__} does not support secrets')
+        pass
+
+
+class S3Attributes(CodeEntryAttributes):
     s3_bucket: str
     s3_item_key: str
     s3_access_key_id: Optional[str] = None
@@ -24,7 +34,7 @@ class S3Attributes(CamelBaseModel):
         self.s3_secret_access_key = SecretStr(secret)
 
 
-class ArchiveAttributes(CamelBaseModel):
+class ArchiveAttributes(CodeEntryAttributes):
 
     class Headers(CamelBaseModel):
         v3io_key: SecretStr = Field(default=None, alias='X-V3io-Session-Key')
@@ -36,7 +46,7 @@ class ArchiveAttributes(CamelBaseModel):
         self.headers.v3io_key = SecretStr(secret)
 
 
-class GithubAttributes(CamelBaseModel):
+class GithubAttributes(CodeEntryAttributes):
 
     class Headers(CamelBaseModel):
         auth_token: Optional[SecretStr] = Field(default=None, alias='Authorization')

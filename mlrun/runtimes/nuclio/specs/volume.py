@@ -5,14 +5,17 @@ from pydantic import SecretStr, PrivateAttr
 from . import CamelBaseModel
 
 
-class Volume(ABC):
+class Volume(CamelBaseModel, ABC):
 
     @abstractmethod
     def target(self, value: str):
         pass
 
+    def add_secret(self, secret: str):
+        raise NotImplemented(f'{self.__class__.__name__} does not support secrets')
 
-class PersistentVolume(CamelBaseModel, Volume):
+
+class PersistentVolume(Volume):
 
     class Attributes(CamelBaseModel):
         claim_name: str = None
@@ -24,7 +27,7 @@ class PersistentVolume(CamelBaseModel, Volume):
         self.persistent_volume_claim.claim_name = value
 
 
-class HostVolume(CamelBaseModel, Volume):
+class HostVolume(Volume):
 
     class Attributes(CamelBaseModel):
         path: str = None
@@ -36,7 +39,7 @@ class HostVolume(CamelBaseModel, Volume):
         self.host_path.path = value
 
 
-class SecretVolume(CamelBaseModel, Volume):
+class SecretVolume(Volume):
 
     class Attributes(CamelBaseModel):
         secret_name: str = None
@@ -48,7 +51,7 @@ class SecretVolume(CamelBaseModel, Volume):
         self.secret.secret_name = value
 
 
-class V3ioVolume(CamelBaseModel, Volume):
+class V3ioVolume(Volume):
 
     class Attributes(CamelBaseModel):
 
@@ -91,7 +94,7 @@ class VolumeSpec(CamelBaseModel):
 
     """
 
-    volume: Union[HostVolume, PersistentVolume, SecretVolume, V3ioVolume]
+    volume: Volume
 
     class Mount(CamelBaseModel):
         """ Volume spec for mapping host file systems into a nuclio function

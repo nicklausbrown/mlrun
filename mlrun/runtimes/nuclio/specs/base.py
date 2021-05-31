@@ -2,14 +2,9 @@ from enum import Enum
 from typing import Dict, List, Union, Optional
 from pydantic import Field
 
-from . import (CamelBaseModel,
-               HttpTrigger,
-               KafkaTrigger,
-               V3ioStreamTrigger,
-               CronTrigger,
-               VolumeSpec)
-
-from .code_entry import CodeEntryType, S3Attributes, ArchiveAttributes, GithubAttributes
+from . import VolumeSpec, CamelBaseModel
+from .code_entry import CodeEntryType, CodeEntryAttributes
+from .trigger import Trigger
 
 
 class FunctionMetadata(CamelBaseModel):
@@ -76,7 +71,7 @@ class BuildSpec(CamelBaseModel):
     function_source_code: Optional[str] = None
 
     code_entry_type: Optional[CodeEntryType] = None
-    code_entry_attributes: Optional[Union[S3Attributes, ArchiveAttributes, GithubAttributes]] = None
+    code_entry_attributes: Optional[CodeEntryAttributes] = None
 
     registry: Optional[str] = None
     base_image: Optional[str] = None
@@ -241,7 +236,7 @@ class NuclioPythonSpec(CamelBaseModel):
         Unix style image security constraints like users and groups
 
     """
-    runtime: str = "python:3.6"
+    runtime: str = "python:3.7"
     handler: str = "main:handler"
     description: Optional[str] = None
 
@@ -259,10 +254,7 @@ class NuclioPythonSpec(CamelBaseModel):
 
     env: List[EnvVariableSpec] = Field(default_factory=lambda: list())
     volumes: List[VolumeSpec] = Field(default_factory=lambda: list())
-    triggers: Dict[str, Union[HttpTrigger,
-                              KafkaTrigger,
-                              V3ioStreamTrigger,
-                              CronTrigger]] = Field(default_factory=lambda: dict())
+    triggers: Dict[str, Trigger] = Field(default_factory=lambda: dict())
     resources: Optional[ResourcesSpec] = ResourcesSpec()
     platform: Optional[PlatformSpec] = PlatformSpec()
     security_context: Optional[SecurityContextSpec] = SecurityContextSpec()
@@ -286,5 +278,5 @@ class NuclioConfig(CamelBaseModel):
     def add_volume(self, volume: VolumeSpec):
         self.spec.volumes.append(volume)
 
-    def add_trigger(self, name, trigger: Union[HttpTrigger, KafkaTrigger, V3ioStreamTrigger, CronTrigger]):
+    def add_trigger(self, name, trigger: Trigger):
         self.spec.triggers[name] = trigger
