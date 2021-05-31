@@ -278,5 +278,5 @@ class NuclioConfig(CamelBaseModel):
     def add_volume(self, volume: VolumeSpec):
         self.spec.volumes.append(volume)
 
-    def add_trigger(self, name, trigger: Trigger):
-        self.spec.triggers[name] = trigger
+    def add_trigger(self, trigger: Trigger):
+        self.spec.triggers[trigger.name()] = trigger

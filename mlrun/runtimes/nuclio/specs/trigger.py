@@ -1,13 +1,22 @@
 from enum import Enum
 from abc import ABC
-from typing import Optional, Dict, Union, List
-from pydantic import Field, SecretStr
+from typing import Optional, Dict, Union, List, Any
+from pydantic import Field, SecretStr, PrivateAttr
 
 from . import CamelBaseModel
 
 
 class Trigger(CamelBaseModel, ABC):
-    pass
+
+    _name: str
+    kind: str
+    max_workers: int
+    attributes: Any
+
+    def name(self, name: str = None):
+        if name is not None:
+            self._name = name
+        return self._name
 
 
 class CronTrigger(Trigger):
@@ -20,6 +29,8 @@ class CronTrigger(Trigger):
 
 
     """
+
+    _name: str = PrivateAttr(default='cron')
 
     kind: str = 'cron'
     max_workers: Optional[int] = 1
@@ -67,6 +78,8 @@ class KafkaTrigger(Trigger):
 
 
     """
+
+    _name: str = PrivateAttr(default='kafka')
 
     kind: str = 'kafka-cluster'
     max_workers: Optional[int] = 1
@@ -117,6 +130,8 @@ class V3ioStreamTrigger(Trigger):
         Trigger attributes for further configuration
 
     """
+
+    _name: str = PrivateAttr(default='v3io')
 
     kind: str = 'v3ioStream'
     max_workers: int = 1
@@ -197,6 +212,8 @@ class HttpTrigger(Trigger):
 
 
     """
+
+    _name: str = PrivateAttr(default='http')
 
     kind: str = 'http'
     max_workers: Optional[int] = 1
