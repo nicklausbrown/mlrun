@@ -26,8 +26,15 @@ trigger.attributes.consumer_group = 'nuclio'
 trigger.attributes.container_name = 'users'
 trigger.attributes.stream_path = 'v3io_user/stream-path'
 trigger.add_secret('StringYouWillNotSee')
-# optionally change trigger name, comes with 'v3io'
+# # optionally change trigger name, comes with 'v3io'
 # trigger.name('special-v3io')
+
+# # or even more convenient
+# trigger = create_v3io_trigger(path='v3io_user/stream-path',
+#                               container='users',
+#                               access_key='StringYouWillNotSee', # also getenv V3IO_ACCESS_KEY
+#                               max_workers=10) 
+# trigger.attributes.consumer_group = 'nuclio'
 
 config.add_trigger(trigger)
 
