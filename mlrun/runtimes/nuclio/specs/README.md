@@ -36,6 +36,12 @@ trigger.add_secret('StringYouWillNotSee')
 #                               max_workers=10) 
 # trigger.attributes.consumer_group = 'nuclio'
 
+
+# # or for a different streaming option
+# trigger = create_kafka_trigger(topic='important-topic',
+#                                brokers=['broker1', 'broker2'],
+#                                max_workers=10) 
+
 config.add_trigger(trigger)
 
 print(config.to_yaml())

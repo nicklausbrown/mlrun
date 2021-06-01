@@ -1,9 +1,10 @@
 import os
+from typing import List, Union
 from . import KafkaTrigger, HttpTrigger, V3ioStreamTrigger, CronTrigger
 
 
 def create_v3io_trigger(
-    path,
+    path: str,
     container: str = 'users',
     access_key: str = None,
     max_workers: int = 1,
@@ -27,3 +28,22 @@ def create_v3io_trigger(
     return trigger
 
 
+def create_kafka_trigger(
+    topic: Union[str, List[str]],
+    brokers: List[str],
+    partitions: List[int] = None,
+    consumer_group: str = 'nuclio-function',
+    max_workers: int = 1,
+    name: str = 'kafka-topic'
+) -> KafkaTrigger:
+
+    trigger = KafkaTrigger()
+    trigger.attributes.consumer_group = consumer_group
+    trigger.attributes.topics = [topic] if type(topic) is str else topic
+    if partitions is None:
+        partitions = [0]
+    trigger.attributes.partitions = partitions
+    trigger.attributes.brokers = brokers
+    trigger.max_workers = max_workers
+    trigger.name(name)
+    return trigger
