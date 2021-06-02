@@ -29,18 +29,29 @@ trigger.add_secret('StringYouWillNotSee')
 # # optionally change trigger name, comes with 'v3io'
 # trigger.name('special-v3io')
 
-# # or even more convenient
-# trigger = create_v3io_trigger(path='v3io_user/stream-path',
-#                               container='users',
-#                               access_key='StringYouWillNotSee', # also getenv V3IO_ACCESS_KEY
-#                               max_workers=10) 
-# trigger.attributes.consumer_group = 'nuclio'
+# or even more convenient
+trigger = create_v3io_trigger(path='v3io_user/stream-path',
+                              container='users',
+                              access_key='StringYouWillNotSee', # also getenv V3IO_ACCESS_KEY
+                              max_workers=10) 
+trigger.attributes.consumer_group = 'nuclio'
 
+# or for a different streaming option
+trigger = create_kafka_trigger(topic='important-topic',
+                               brokers=['broker1', 'broker2'],
+                               max_workers=10) 
 
-# # or for a different streaming option
-# trigger = create_kafka_trigger(topic='important-topic',
-#                                brokers=['broker1', 'broker2'],
-#                                max_workers=10) 
+# or for a request / response option
+ingress = create_http_ingress(name='http', host="host.nuclio",
+                              paths=['/first/path', '/second/path'])
+trigger = create_http_trigger(port=32003,
+                              max_workers=10,
+                              ingresses=ingress)
+
+# or for a scheduled option
+trigger = create_cron_trigger(schedule='*/5 * * * *',
+                              max_workers=10,
+                              event_body='SomeParameter')
 
 config.add_trigger(trigger)
 
