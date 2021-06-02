@@ -1,6 +1,6 @@
 import os
 from typing import List, Union, Dict
-from . import KafkaTrigger, HttpTrigger, V3ioStreamTrigger, CronTrigger
+from . import KafkaTrigger, HttpTrigger, V3ioStreamTrigger, CronTrigger, VolumeSpec, Volume
 from .trigger import HttpIngresses
 
 
@@ -105,3 +105,14 @@ def create_cron_trigger(
     trigger.name(name)
 
     return trigger
+
+
+def create_volume(
+    volume: Volume,
+    function_path: str,
+    volume_target: str
+) -> VolumeSpec:
+
+    volume_spec = VolumeSpec(volume=volume)
+    volume_spec.map(function_path=function_path, volume_target=volume_target)
+    return volume_spec

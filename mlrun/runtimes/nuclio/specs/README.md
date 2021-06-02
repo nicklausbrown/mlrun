@@ -19,6 +19,13 @@ volume.name('v3io')\
       .map('/inside_function', '/users/v3io_user/path')\
       .add_secret('StringYouWillNotSee')
 
+# # or even more convenient
+# volume = create_volume(volume=V3ioVolume(),
+#                        function_path='/inside_function',
+#                        volume_target='/users/v3io_user/path')
+# volume.add_secret('StringYouWillNotSee')
+
+
 config.add_volume(volume)
 
 trigger = V3ioStreamTrigger()
