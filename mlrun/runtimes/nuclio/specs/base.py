@@ -10,7 +10,8 @@ from .trigger import Trigger
 class FunctionMetadata(CamelBaseModel):
     """ Nuclio function metadata
 
-    Learn more here: https://nuclio.io/docs/latest/reference/function-configuration/function-configuration-reference/#function-metadata-metadata
+    Learn more here:
+    https://nuclio.io/docs/latest/reference/function-configuration/function-configuration-reference/#function-metadata-metadata
 
     Attributes
     ----------
@@ -121,8 +122,8 @@ class SecurityContextSpec(CamelBaseModel):
 class ResourcesSpec(CamelBaseModel):
     """ K8s style resource specification
 
-    Check it out here: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
-    #requests-and-limits
+    Check it out here:
+    https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#requests-and-limits
 
     Attributes
     ----------
@@ -136,8 +137,8 @@ class ResourcesSpec(CamelBaseModel):
     class Resources(CamelBaseModel):
         """ K8s style resource specification
 
-        Check it out here: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
-        #requests-and-limits
+        Check it out here:
+        https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#requests-and-limits
 
         Attributes
         ----------
@@ -192,7 +193,8 @@ class PlatformSpec(CamelBaseModel):
 class NuclioPythonSpec(CamelBaseModel):
     """ Nuclio function highest level specification
 
-    Learn more here: https://nuclio.io/docs/latest/reference/function-configuration/function-configuration-reference/#function-specification-spec
+    Learn more here:
+    https://nuclio.io/docs/latest/reference/function-configuration/function-configuration-reference/#function-specification-spec
 
     Attributes
     ----------
@@ -206,9 +208,9 @@ class NuclioPythonSpec(CamelBaseModel):
     image : str, optional
         Potential code entry type for specifying a nuclio function as a docker image directly
     min_replicas : int, optional
-        The minimum number of replicas
+        The minimum number of replicas for the function (similar to k8s pods)
     max_replicas : int, optional
-        The maximum number of replicas
+        The maximum number of replicas for the function (similar to k8s pods)
     replicas : int, optional
         The number of desired instances; 0 for auto-scaling.
     target_cpu : int, optional
@@ -262,6 +264,43 @@ class NuclioPythonSpec(CamelBaseModel):
 
 
 class NuclioConfig(CamelBaseModel):
+    """Outer most spec for a nuclio function
+
+    Attributes
+    ----------
+    api_version : str
+        Nuclio api version, defaults to nuclio.io/v1
+    kind : str
+        Nuclio function kind, defaults to NuclioFunction
+    metadata : FunctionMetadata
+        Metadata section for the nuclio function for things like labels and annotations
+    spec : NuclioPythonSpec
+        Specification for nuclio function, most important section
+
+    Methods
+    -------
+    add_env(self, variable: Union[Dict, EnvVariableSpec])
+        Add an environment variable to the execution environment of the nuclio function
+    add_volume(self, volume: VolumeSpec)
+        Add a VolumeSpec object to the nuclio function, convenience method create_volume()
+    add_trigger(self, trigger: Trigger)
+        Add a Trigger object to the nuclio function
+
+
+    Examples
+    --------
+    Adding an environment variable
+    >>> from mlrun.runtimes.nuclio.specs import NuclioConfig, create_volume, create_kafka_trigger, HostVolume
+    >>> config = NuclioConfig()
+    >>> config.add_env({'ENV_VARIABLE': 'some_value'})
+
+    Adding a volume into the function
+    >>> config.add_volume(create_volume(HostVolume(), '/inside/the/function', '/outside/the/function'))
+
+    Adding a trigger to the function
+    >>> config.add_trigger(create_kafka_trigger('important-topic', ['broker1', 'broker2']))
+
+    """
 
     api_version: str = "nuclio.io/v1"
     kind: str = "NuclioFunction"
@@ -269,14 +308,59 @@ class NuclioConfig(CamelBaseModel):
     spec: NuclioPythonSpec = NuclioPythonSpec()
 
     def add_env(self, variable: Union[Dict, EnvVariableSpec]):
+        """Convenience method for adding an environment variable into the nuclio function
+
+        See class docstring for example
+
+        Parameters
+        ----------
+        variable : Union[Dict, EnvVariableSpec]
+            Environment variable mapping, either a Dictionary of key values or EnvVariableSpec
+
+        Returns
+        -------
+        self
+
+        """
         if type(variable) is dict:
             for key, value in variable.items():
                 self.spec.env.append(EnvVariableSpec(name=key, value=value))
         else:
             self.spec.env.append(variable)
+        return self
 
     def add_volume(self, volume: VolumeSpec):
+        """Convenience method for adding a volume to the nuclio function
+
+        See class docstring for example
+
+        Parameters
+        ----------
+        volume : VolumeSpec
+            VolumeSpec mapping of a volume into the nuclio function
+
+        Returns
+        -------
+        self
+
+        """
         self.spec.volumes.append(volume)
+        return self
 
     def add_trigger(self, trigger: Trigger):
+        """Convenience method for adding a trigger to the nuclio function
+
+        See class docstring for example
+
+        Parameters
+        ----------
+        trigger : Trigger
+            Trigger object to attach to the nuclio function like KafkaTrigger or CronTrigger
+
+        Returns
+        -------
+        self
+
+        """
         self.spec.triggers[trigger.name()] = trigger
+        return self

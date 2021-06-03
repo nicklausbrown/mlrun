@@ -39,7 +39,7 @@ trigger.add_secret('StringYouWillNotSee')
 # or even more convenient
 trigger = create_v3io_trigger(path='v3io_user/stream-path',
                               container='users',
-                              access_key='StringYouWillNotSee', # also getenv V3IO_ACCESS_KEY
+                              access_key='StringYouWillNotSee', # also os.getenv(V3IO_ACCESS_KEY) called automatically
                               max_workers=10) 
 trigger.attributes.consumer_group = 'nuclio'
 config.add_trigger(trigger)

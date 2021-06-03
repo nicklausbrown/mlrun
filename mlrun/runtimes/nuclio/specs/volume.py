@@ -78,7 +78,7 @@ class VolumeSpec(CamelBaseModel):
 
     Attributes
     ----------
-    volume : Union[HostVolume, PersistentVolume, SecretVolume, V3ioVolume]
+    volume : Volume
         Volume subtype to use with volume specification
     volume_mount : VolumeSpec.Mount
         Mount point for function side parameters
