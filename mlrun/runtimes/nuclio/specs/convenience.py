@@ -1,7 +1,7 @@
 import os
 from typing import List, Union, Dict
 from . import KafkaTrigger, HttpTrigger, V3ioStreamTrigger, CronTrigger, VolumeSpec, Volume
-from .trigger import HttpIngresses
+from .trigger import HttpIngress
 
 
 def create_v3io_trigger(
@@ -104,7 +104,7 @@ def create_kafka_trigger(
 
 def create_http_trigger(
     port: int = 32001,
-    ingresses: Dict[str, HttpIngresses] = None,
+    ingresses: Dict[str, HttpIngress] = None,
     max_workers: int = 1,
     name: str = 'http'
 ) -> HttpTrigger:
@@ -119,8 +119,8 @@ def create_http_trigger(
     ----------
     port : int, optional
         Port on which the trigger will listen, defaults to 32001
-    ingresses : Dict[str, HttpIngresses], optional
-        Dictionary of http ingresses with the name mapped to an HttpIngresses object
+    ingresses : Dict[str, HttpIngress], optional
+        Dictionary of http ingresses with the name mapped to an HttpIngress object
     max_workers : int, optional
         Maximum amount of workers dedicated to this trigger in a replica, defaults to 1
     name : str, optional
@@ -145,8 +145,8 @@ def create_http_ingress(
     name: str,
     host: str,
     paths: List[str]
-) -> Dict[str, HttpIngresses]:
-    """Convenience function for creating an HttpIngresses object
+) -> Dict[str, HttpIngress]:
+    """Convenience function for creating an HttpIngress object
 
     - Kubernetes documentation: https://kubernetes.io/docs/concepts/services-networking/ingress/
     - Nuclio documentation: https://nuclio.io/docs/latest/reference/triggers/http/
@@ -164,11 +164,11 @@ def create_http_ingress(
 
     Returns
     -------
-    Dictionary mapping the name to an HttpIngresses object
+    Dictionary mapping the name to an HttpIngress object
 
     """
 
-    ingress = HttpIngresses()
+    ingress = HttpIngress()
     ingress.host = host
     ingress.paths = paths
     return {name: ingress}

@@ -174,7 +174,7 @@ class V3ioStreamTrigger(Trigger):
         self.password = SecretStr(secret)
 
 
-class HttpIngresses(CamelBaseModel):
+class HttpIngress(CamelBaseModel):
     host: str = None
     paths: List[str] = Field(default_factory=lambda: list())
 
@@ -210,7 +210,7 @@ class HttpTrigger(Trigger):
         max_request_body_size: Optional[int] = None
         read_buffer_size: Optional[int] = None
 
-        ingresses: Optional[Dict[str, HttpIngresses]] = Field(default_factory=lambda: dict())
+        ingresses: Optional[Dict[str, HttpIngress]] = Field(default_factory=lambda: dict())
         cors: Optional[HttpCORS] = None
 
         service_type: Optional[HttpServiceOptions] = None
