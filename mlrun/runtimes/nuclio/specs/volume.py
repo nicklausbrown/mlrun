@@ -152,6 +152,10 @@ class VolumeSpec(CamelBaseModel):
         volume_target : str
             Respective volume name, path, etc. for specification - see specific volumes for target
 
+        Returns
+        -------
+        self
+
         """
         self.volume_mount.mount_path = function_path
         self.volume.target(volume_target)
@@ -164,6 +168,10 @@ class VolumeSpec(CamelBaseModel):
         ----------
         secret : str
             Secret value to associate with a volume
+
+        Returns
+        -------
+        self
 
         """
         try:
