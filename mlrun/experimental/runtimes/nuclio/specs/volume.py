@@ -1,6 +1,6 @@
 import os
 from abc import ABC, abstractmethod
-from typing import Union, Optional
+from typing import Optional
 from pydantic import SecretStr, PrivateAttr
 from . import CamelBaseModel
 
