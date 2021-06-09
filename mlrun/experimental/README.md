@@ -42,6 +42,9 @@ results = training.execute()
 model = results.model
 model.summary()
 
+training.hyper_parameters(strategy=ml.BayesianSearch('<optimization params>'))  # dynamically generate runs according to updated beliefs
+# training.hyper_parameters(strategy=ml.GridSearch('<grid params>'))  # work off a fixed grid size
+
 
 function = ml.NuclioFunction(inject_config=True)
 function.add(ml.DataStore())
