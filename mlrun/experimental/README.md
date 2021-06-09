@@ -48,8 +48,9 @@ function.add(ml.Secret('s3-read-access'))
 
 server = ml.TensorflowServer(engine=function,
                              models=model,
-                             inputs=ml.FeatureStore('online-feature-set').vector())  # automatically register trigger with this
-
+                             inputs=ml.FeatureStore('online-feature-set').vector(),  # automatically register trigger with this
+                             monitors=[ml.FeatureDrift(statistics=True),  # use the model training statistics to measure drift
+                                       ml.ConceptDrift()])
 server.local()
 response = server.execute(ml.FeatureVector([0, 1, 2, 3]))
 server.deploy()
