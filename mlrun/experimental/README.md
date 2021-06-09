@@ -122,7 +122,7 @@ class Preprocessor:
 gpu = ml.NuclioFunction().add_limits(gpu=1)
 tf_gpu = gpu.copy().commands(['pip install tensorflow>=2.4.0'])  # allow overriding the registry config
         
-# Graphs should accept initialized objects for autocomplete, also imports should "just work"
+# Graphs should accept initialized objects for autocomplete, also imports should "just work" locally and remotely
 graph.step(Preprocessor(param1=2))\
      .step(ml.TensforflowServer(registry="hub://private/tensorflow-model-server", engine=tf_gpu), group='fan')\
      .step(ml.Server(CustomServer(ml.Model('onnx-model')), engine=gpu.copy()), group='fan')\
