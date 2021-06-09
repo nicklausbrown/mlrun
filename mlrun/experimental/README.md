@@ -91,13 +91,18 @@ class Preprocessor:
     
     def __init__(self, param1):
         self.param1 = param1
+        
+    def do(self, event):
+        for index, val in enumerate(event.vector):
+            event.vector[index] = val / self.param1
+        return event
 
         
 gpu = ml.NuclioFunction().with_limits(gpu=1)
 tf_gpu = gpu.copy().commands(['pip install tensorflow'])
         
 # Graphs should accept initialized objects for autocomplete, also imports should "just work"
-graph.step(Preprocessor(param1='this_parameter'))\
+graph.step(Preprocessor(param1=2))\
      .step(ml.TensforflowServer(registry="hub://private/tensorflow-model-server", engine=tf_gpu), name='tf_model')\
      .step(ml.Server(CustomServer(ml.Model('onnx-model')), engine=gpu.copy()), name='custom_model')\
      .stream(producers=['tf_model', 'custom_model'])  # stream name should be derived by default, allow a name parameter
