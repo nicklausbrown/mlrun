@@ -17,6 +17,7 @@ preprocessor = ml.Run(name='preprocessing',
                       datastores=ml.DataStore())
 preprocessor.local()
 results = preprocessor.execute()
+results.summary()
 
 
 training = ml.TrainingRun(name='tensorflow-training',
