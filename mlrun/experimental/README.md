@@ -40,6 +40,7 @@ training = ml.TrainingRun(name='tensorflow-training',
 training.local()
 results = training.execute()
 model = results.model
+model.summary()
 
 
 function = ml.NuclioFunction(inject_config=True)
