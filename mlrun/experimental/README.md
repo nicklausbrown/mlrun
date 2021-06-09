@@ -99,7 +99,7 @@ ml.Config()\
 # graph at runtime) allow this to be optional, but it could be great
 # for monitoring.
 graph = ml.GraphServer(engine=ml.NuclioFunction(),  
-                       mode='async',                
+                       async_mode=True,                
                        tag='pipeline-1234') 
 
 class Preprocessor:
