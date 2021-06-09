@@ -21,8 +21,8 @@ import mlrun.experimental as ml
 
 ml.Config()\
     .from_environment()\
-    .parity(local='Users/me/project/location',
-            remote='Remote/path/with/same/intent')
+    .parity(path={'local': 'Users/me/project/location',  # used to maintain a local / remote mapping with path as an option
+                  'remote': 'Remote/path/with/same/intent'})
     
 
 
