@@ -56,11 +56,12 @@ response = server.execute(ml.FeatureVector([0, 1, 2, 3]))
 server.deploy()
 response = server.execute()  # use the feature store definition to automatically call on most recent record
 
-mlops_pipeline = ml.Pipeline(steps=[preprocessor, training, server])
+mlops_pipeline = ml.Pipeline(steps=[preprocessor, training, server]) # chained linear steps, don't assign to use below 
+mlops_pipeline.custom('<kubeflow pipeline definition>')  # access to the underlying kfp for direct implementation
+
 mlops_pipeline.local()
 mlops_pipeline.execute()
 
-mlops_pipeline.kfp  # access to the underlying kfp for direct implementation
 mlops_pipeline.add_trigger(server.monitoring,  # trigger execution if the model server monitor sets off an alarm
                            require_approval=True)  # adds a notification and approval hook
 mlops_pipeline.add_trigger(schedule='24h')  # always retrain at least once a day
