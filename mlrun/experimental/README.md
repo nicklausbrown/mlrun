@@ -113,7 +113,7 @@ class Preprocessor:
         return event
 
         
-gpu = ml.NuclioFunction().with_limits(gpu=1)
+gpu = ml.NuclioFunction().add_limits(gpu=1)
 tf_gpu = gpu.copy().commands(['pip install tensorflow'])
         
 # Graphs should accept initialized objects for autocomplete, also imports should "just work"
