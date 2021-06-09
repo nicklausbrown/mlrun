@@ -120,7 +120,7 @@ tf_gpu = gpu.copy().commands(['pip install tensorflow'])
 graph.step(Preprocessor(param1=2))\
      .step(ml.TensforflowServer(registry="hub://private/tensorflow-model-server", engine=tf_gpu), name='tf_model')\
      .step(ml.Server(CustomServer(ml.Model('onnx-model')), engine=gpu.copy()), name='custom_model')\
-     .stream(producers=['tf_model', 'custom_model'])  # stream name should be derived by default, allow a name parameter
+     .stream(inputs=['tf_model', 'custom_model'])  # stream name should be derived by default, allow a name parameter
 
 graph.local()
 graph.execute(ml.FeatureVector([0, 1, 2, 3]))
