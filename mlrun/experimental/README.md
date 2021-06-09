@@ -1,7 +1,7 @@
 # Introduction
 Ideas for the mlrun api. 
 
-1. I have limited documentation in the code to emphasize the readability/learnability of the classes and methods. In general, I have prioritized polymorphism and "composition over inheritance" with my thoughts in this design. Servers and Runs may be subclassed, but runtimes are composed of things like specs and code and added into Servers and Runs - because they're distinctly different entities.
+1. I have limited documentation in the code to emphasize the readability/learnability of the classes and methods. In general, I have prioritized polymorphism and "composition over inheritance" with my thoughts in this design. Servers and Runs may be subclassed, but runtimes are composed of things like specs and code and added into Servers and Runs - because they're distinctly different entities. Above all - [things not strings](https://blog.google/products/search/introducing-knowledge-graph-things-not/).
 
 1. importing mlrun as ml solves a number of problems. The convenience function code_to_function and many other classes have too many parameters IMO. Importing ml allows us to have an "import *" syntax which is namespaced to ml. The public API can be defined within that namespace. Anything available in ml.<class or function> would be public. Furthermore, this promotes composition of classes with ease - avoiding long imports `from mlrun.blah.foo.this import Class`. Convenience functions can still wrap this, but they should be indicated as convenience entrypoints into the main API.
 
