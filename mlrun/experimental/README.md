@@ -71,20 +71,26 @@ ml.Config()\
 ```python
 
 import mlrun.experimental as ml
+from mlrun.experimental.examples.servers import CustomServer
+
+
 ml.Config()\
     .private_hub('<some way to connect to private function hub>')
 
-graph = ml.GraphServer(engine=ml.NuclioFunction())  # having the graph be a totally separate nuclio function could
-                                                    # be useful to provide a manager pattern (give info about the full graph at runtime)
+graph = ml.GraphServer(engine=ml.NuclioFunction(),  # having the graph be a totally separate nuclio function could
+                       mode='async')                # be useful to provide a manager pattern (give info about the full graph at runtime)
                                                     # allow this to be optional, but it would be great for monitoring
-
 class Preprocessor:
     
     def __init__(self, param1):
         self.param1 = param1
 
+        
+# Graphs should accept initialized objects for autocomplete, also imports should "just work"
 graph.step(Preprocessor(param1='this_parameter'))\
-     .step(ml.TensforflowServer(registry="hub://private/tensorflow-model-server"))
+     .step(ml.TensforflowServer(registry="hub://private/tensorflow-model-server"), name='tf_model')\
+     .step(ml.Server(CustomServer(ml.Model('onnx-model'))), name='custom_model')\
+     .stream(producers=['tf_model', 'custom_model'])
 
 graph.local()
 graph.invoke(ml.FeatureVector([0, 1, 2, 3]))
