@@ -1,5 +1,5 @@
 # Introduction
-An idea for the mlrun api
+Ideas for the mlrun api
 
 ## Simple Example
 ```python
@@ -7,7 +7,7 @@ import mlrun.experimental as ml
 
 ml.Config()\
     .from_environment()\
-    .parity(lacal='Users/me/project/location',
+    .parity(local='Users/me/project/location',
             remote='Remote/path/with/same/intent')
     
 
@@ -68,6 +68,8 @@ ml.Config()\
 
 ## Composed Servers
 
+Servers should be able to be run together alongside regular steps in graphs. There should be no difference between local and remote syntax other than .local(). If it doesn't work remotely, it should work locally and vice-versa.
+
 ```python
 
 import mlrun.experimental as ml
@@ -86,11 +88,13 @@ class Preprocessor:
         self.param1 = param1
 
         
+gpu = ml.NuclioFunction().with_limits(gpu=1)
+        
 # Graphs should accept initialized objects for autocomplete, also imports should "just work"
 graph.step(Preprocessor(param1='this_parameter'))\
-     .step(ml.TensforflowServer(registry="hub://private/tensorflow-model-server"), name='tf_model')\
-     .step(ml.Server(CustomServer(ml.Model('onnx-model'))), name='custom_model')\
-     .stream(producers=['tf_model', 'custom_model'])
+     .step(ml.TensforflowServer(registry="hub://private/tensorflow-model-server", engine=gpu), name='tf_model')\
+     .step(ml.Server(CustomServer(ml.Model('onnx-model')), engine=gpu.copy()), name='custom_model')\
+     .stream(producers=['tf_model', 'custom_model'])  # stream name should be derived by default, allow a name parameter
 
 graph.local()
 graph.invoke(ml.FeatureVector([0, 1, 2, 3]))
