@@ -63,7 +63,7 @@ mlops_pipeline.kfp  # access to the underlying kfp for direct implementation
 mlops_pipeline.add_trigger(server.monitoring,  # trigger execution if the model server monitor sets off an alarm
                            require_approval=True)  # adds a notification and approval hook
 mlops_pipeline.add_trigger(schedule='24h')  # always retrain at least once a day
-mlops_pipeline.deploy(transfer_local=True, register=True)  # attach the pipeline to an mlrun server, add local results / artifacts to remote db, only build and register (don't run)
+mlops_pipeline.deploy(transfer_local=True, register_only=True)  # attach the pipeline to an mlrun server, add local results / artifacts to remote db, only build and register (don't run)
 mlops_pipeline.execute()  # start a remote run of the pipeline
 
 ```
@@ -127,6 +127,10 @@ graph.step(Preprocessor(param1=2))\
 
 graph.local()
 graph.execute(ml.FeatureVector([0, 1, 2, 3]))
+
 graph.deploy()
+# allow executing and reading the graph stream output remotely, for the most recent 10 messages
+with graph.listen():
+    graph.execute(ml.FeatureStore('online-feature-set').tail(10).vector())
 
 ```
