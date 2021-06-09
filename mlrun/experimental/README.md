@@ -63,7 +63,7 @@ mlops_pipeline.kfp  # access to the underlying kfp for direct implementation
 mlops_pipeline.add_trigger(server.monitoring,  # trigger execution if the model server monitor sets off an alarm
                            require_approval=True)  # adds a notification and approval hook
 mlops_pipeline.add_trigger(schedule='24h')  # always retrain at least once a day
-mlops_pipeline.register(transfer_local=True)  # attach the pipeline to an mlrun server, add local results / artifacts to remote db
+mlops_pipeline.deploy(transfer_local=True, register=True)  # attach the pipeline to an mlrun server, add local results / artifacts to remote db, only build and register (don't run)
 mlops_pipeline.execute()  # start a remote run of the pipeline
 
 ```
