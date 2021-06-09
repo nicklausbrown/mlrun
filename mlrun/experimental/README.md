@@ -1,6 +1,8 @@
 # Introduction
 Ideas for the mlrun api. 
 
+1. I have limited documentation in the code to emphasize the readability/learnability of the classes and methods.
+
 1. importing mlrun as ml solves a number of problems. The convenience function code_to_function and many other classes have too many parameters IMO. Importing ml allows us to have an "import *" syntax which is namespaced to ml. The public API can be defined within that namespace. Anything available in ml.<class or function> would be public. Furthermore, this promotes composition of classes with ease - avoiding long imports `from mlrun.blah.foo.this import Class`. Convenience functions can still wrap this, but they should be indicated as convenience entrypoints into the main API.
 
 1. There is a split in functionality between the idea of a Run and a Server with mlrun. A run is batch oriented, thus has a beginning and end. A server has no beginning or end, it exists to respond to certain input in a timely manner. Both runs and servers should be monitored. 
