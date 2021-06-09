@@ -80,8 +80,8 @@ ml.Config()\
     .private_hub('<some way to connect to private function hub>')
 
 graph = ml.GraphServer(engine=ml.NuclioFunction(),  # having the graph be a totally separate nuclio function could
-                       mode='async')                # be useful to provide a manager pattern (give info about the full graph at runtime)
-                                                    # allow this to be optional, but it would be great for monitoring
+                       mode='async',                # be useful to provide a manager pattern (give info about the full graph at runtime)
+                       tag='pipeline-1234')         # allow this to be optional, but it would be great for monitoring
 class Preprocessor:
     
     def __init__(self, param1):
@@ -89,10 +89,11 @@ class Preprocessor:
 
         
 gpu = ml.NuclioFunction().with_limits(gpu=1)
+tf_gpu = gpu.copy().commands(['pip install tensorflow'])
         
 # Graphs should accept initialized objects for autocomplete, also imports should "just work"
 graph.step(Preprocessor(param1='this_parameter'))\
-     .step(ml.TensforflowServer(registry="hub://private/tensorflow-model-server", engine=gpu), name='tf_model')\
+     .step(ml.TensforflowServer(registry="hub://private/tensorflow-model-server", engine=tf_gpu), name='tf_model')\
      .step(ml.Server(CustomServer(ml.Model('onnx-model')), engine=gpu.copy()), name='custom_model')\
      .stream(producers=['tf_model', 'custom_model'])  # stream name should be derived by default, allow a name parameter
 
