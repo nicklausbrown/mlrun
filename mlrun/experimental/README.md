@@ -1,6 +1,7 @@
 # Introduction
 An idea for the mlrun api
 
+## Simple Example
 ```python
 import mlrun.experimental as ml
 
@@ -25,6 +26,7 @@ model = training.model
 
 function = ml.NuclioFunction(inject_config=True)
 function.add(ml.DataStore())
+function.add(ml.Secret('s3-read-access'))
 
 server = ml.TensorflowServer(engine=function,
                              models=model,
@@ -36,8 +38,13 @@ server.deploy()
 response = server.invoke()
 
 mlops_pipeline = ml.Pipeline(steps=[preprocessor, training, server])
-mlops_pipeline.kfp  # access to the underlying kfp for direct implementation
-mlops_pipeline.register()
+mlops_pipeline.local()
 mlops_pipeline.execute()
+
+mlops_pipeline.kfp  # access to the underlying kfp for direct implementation
+mlops_pipeline.add_trigger(server.monitoring)  # trigger execution if the model server monitor sets off an alarm
+mlops_pipeline.add_trigger(schedule='24h')  # always retrain at least once a day
+mlops_pipeline.register(transfer_local=True)  # attach the pipeline to an mlrun server, add local results / artifacts to remote db
+mlops_pipeline.execute()  # start a remote run of the pipeline
 
 ```
