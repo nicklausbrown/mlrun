@@ -37,9 +37,9 @@ server = ml.TensorflowServer(engine=function,
                              inputs=ml.FeatureStore('online-feature-set').vector())
 
 server.local()
-response = server.invoke(ml.FeatureVector([0, 1, 2, 3]))
+response = server.execute(ml.FeatureVector([0, 1, 2, 3]))
 server.deploy()
-response = server.invoke()
+response = server.execute()
 
 mlops_pipeline = ml.Pipeline(steps=[preprocessor, training, server])
 mlops_pipeline.local()
@@ -109,7 +109,7 @@ graph.step(Preprocessor(param1=2))\
      .stream(producers=['tf_model', 'custom_model'])  # stream name should be derived by default, allow a name parameter
 
 graph.local()
-graph.invoke(ml.FeatureVector([0, 1, 2, 3]))
+graph.execute(ml.FeatureVector([0, 1, 2, 3]))
 graph.deploy()
 
 ```
