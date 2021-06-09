@@ -79,9 +79,14 @@ from mlrun.experimental.examples.servers import CustomServer
 ml.Config()\
     .private_hub('<some way to connect to private function hub>')
 
-graph = ml.GraphServer(engine=ml.NuclioFunction(),  # having the graph be a totally separate nuclio function could
-                       mode='async',                # be useful to provide a manager pattern (give info about the full graph at runtime)
-                       tag='pipeline-1234')         # allow this to be optional, but it would be great for monitoring
+# having the graph be a totally separate nuclio function could
+# be useful to provide a manager pattern (give info about the full 
+# graph at runtime) allow this to be optional, but it could be great
+# for monitoring.
+graph = ml.GraphServer(engine=ml.NuclioFunction(),  
+                       mode='async',                
+                       tag='pipeline-1234') 
+
 class Preprocessor:
     
     def __init__(self, param1):
