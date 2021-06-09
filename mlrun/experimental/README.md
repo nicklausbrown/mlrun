@@ -1,5 +1,17 @@
 # Introduction
-Ideas for the mlrun api
+Ideas for the mlrun api. 
+
+1. importing mlrun as ml solves a number of problems. The convenience function code_to_function and many other classes have too many parameters IMO. Importing ml allows us to have an "import *" syntax which is namespaced to ml. The public API can be defined within that namespace. Anything available in ml.<class or function> would be public. Furthermore, this promotes composition of classes with ease - avoiding long imports `from mlrun.blah.foo.this import Class`. Convenience functions can still wrap this, but they should be indicated as convenience entrypoints into the main API.
+
+1. There is a split in functionality between the idea of a Run and a Server with mlrun. A run is batch oriented, thus has a beginning and end. A server has no beginning or end, it exists to respond to certain input in a timely manner. Both runs and servers should be monitored. 
+   
+1. Runs and servers should receive a runtime engine to determine their execution. Runtimes contain their own specs and code injection. Nuclio is the default runtime for serving, but it could conceivably be extended to Dask and Spark if desired.
+   
+1. Configuration should be designed as configurable from the start. Nothing should happen with the config from simply importing mlrun, as this slows down imports for all development even when irrelevant. Config should be easily collectable from the environment, but there are many other use cases.
+   
+1. The API should attempt to unify the interfaces. We should standardize on words like "add" or "with" and use them everywhere. When possible, we should adopt the same vocabulary for runs and servers in the orchestration phase - like .local() or .execute(). 
+
+1. Both Runs and Servers should have some way to nest their execution. In the examples below, the GraphServer can accept a DAG with servers and a Pipeline can accept a DAG of Runs (and server setups). 
 
 ## Simple Example
 ```python
