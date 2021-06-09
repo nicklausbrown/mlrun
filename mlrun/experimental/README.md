@@ -28,7 +28,7 @@ ml.Config()\
 
 preprocessor = ml.Run(name='preprocessing',
                       engine=ml.DaskRuntime(),
-                      datastores=ml.DataStore())
+                      datastores=ml.DataStore())  # map a volume of some sort into the Run, use parity
 preprocessor.local()
 results = preprocessor.execute()
 results.summary()
@@ -48,12 +48,12 @@ function.add(ml.Secret('s3-read-access'))
 
 server = ml.TensorflowServer(engine=function,
                              models=model,
-                             inputs=ml.FeatureStore('online-feature-set').vector())
+                             inputs=ml.FeatureStore('online-feature-set').vector())  # automatically register trigger with this
 
 server.local()
 response = server.execute(ml.FeatureVector([0, 1, 2, 3]))
 server.deploy()
-response = server.execute()
+response = server.execute()  # use the feature store definition to automatically call on most recent record
 
 mlops_pipeline = ml.Pipeline(steps=[preprocessor, training, server])
 mlops_pipeline.local()
@@ -114,7 +114,7 @@ class Preprocessor:
 
         
 gpu = ml.NuclioFunction().add_limits(gpu=1)
-tf_gpu = gpu.copy().commands(['pip install tensorflow'])
+tf_gpu = gpu.copy().commands(['pip install tensorflow>=2.4.0'])  # allow overriding the registry config
         
 # Graphs should accept initialized objects for autocomplete, also imports should "just work"
 graph.step(Preprocessor(param1=2))\
