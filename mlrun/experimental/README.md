@@ -108,8 +108,8 @@ class Preprocessor:
         self.param1 = param1
         
     def do(self, event: ml.VectorEvent):
-        for index, val in enumerate(event.vector):
-            event.vector[index] = val / self.param1
+        for index, feature in enumerate(event.vector):
+            event.vector[index] = feature / self.param1
         return event
 
         
