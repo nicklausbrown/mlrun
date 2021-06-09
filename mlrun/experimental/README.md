@@ -118,10 +118,10 @@ tf_gpu = gpu.copy().commands(['pip install tensorflow'])
         
 # Graphs should accept initialized objects for autocomplete, also imports should "just work"
 graph.step(Preprocessor(param1=2))\
-     .step(ml.TensforflowServer(registry="hub://private/tensorflow-model-server", engine=tf_gpu), name='tf_model')\
-     .step(ml.Server(CustomServer(ml.Model('onnx-model')), engine=gpu.copy()), name='custom_model')\
-     .stream(inputs=['tf_model', 'custom_model'])  # stream name should be derived by default, allow a name parameter
-   # .fan_in(inputs=['tf_model', 'custom_model'], stream=True)  # alternatively, define a method that automatically generates the stream
+     .step(ml.TensforflowServer(registry="hub://private/tensorflow-model-server", engine=tf_gpu), group='fan')\
+     .step(ml.Server(CustomServer(ml.Model('onnx-model')), engine=gpu.copy()), group='fan')\
+     .stream(inputs='fan')  # stream name should be derived by default, allow a name parameter
+   # .fan_in(inputs='fan', stream=True)  # alternatively, define a method that automatically generates the stream
    #  maybe include merge=StreamMerger(key=<some partition key>) to join streams in fan_in method                                                        
 
 graph.local()
